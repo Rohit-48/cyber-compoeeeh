@@ -1,20 +1,21 @@
 import type { ReactNode } from "react";
 import Button from "@/app/components/ui/Button";
 
-// -------------------------------------------------------------------
-// Component Registry
-// -------------------------------------------------------------------
-// To add a new component:
-//   1. Create the component file in app/components/ui/
-//   2. Import it above
-//   3. Add an entry to the `registry` array below
-// -------------------------------------------------------------------
-
 export interface ComponentEntry {
+  /** Stable id used by the UI */
+  slug: string;
   /** Display name shown in the sidebar */
   name: string;
   /** Short description of the component */
   description: string;
+  /** Project file where the component lives */
+  filePath: string;
+  /** Import statement for consumers */
+  importPath: string;
+  /** Minimal usage example for the docs panel */
+  usage: string;
+  /** Optional implementation notes */
+  notes?: string[];
   /** Array of demo variants to render in the preview area */
   demos: Demo[];
 }
@@ -26,10 +27,26 @@ export interface Demo {
   render: ReactNode;
 }
 
+export function defineComponent(entry: ComponentEntry) {
+  return entry;
+}
+
+// To add a new component:
+// 1. Create the component file in app/components/ui/
+// 2. Import it into this file
+// 3. Register it with defineComponent(...)
 const registry: ComponentEntry[] = [
-  {
+  defineComponent({
+    slug: "button",
     name: "Button",
     description: "A versatile button component with multiple variants and sizes.",
+    filePath: "app/components/ui/Button.tsx",
+    importPath: "@/app/components/ui/Button",
+    usage: `<Button variant="primary" size="md">Save changes</Button>`,
+    notes: [
+      "Keep the public props focused on variants, size, and native button props.",
+      "Add a demo for every visual state you expect consumers to rely on.",
+    ],
     demos: [
       {
         label: "Variants",
@@ -65,7 +82,7 @@ const registry: ComponentEntry[] = [
         ),
       },
     ],
-  },
+  }),
 ];
 
 export default registry;
